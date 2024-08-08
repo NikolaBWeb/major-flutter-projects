@@ -1,1 +1,1 @@
-Flutter repository that will contain projects and code from the  [Flutter & Dart - The Complete Guide [2024 Edition]](https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/learn/lecture/37131054#content) as well as some of my personal Flutter projects.
+Flutter repository that will contain projects and code from the  [Flutter & Dart - The Complete Guide [2024 Edition]](https://www.udemy.com/course/learn-flutter-dart-to-build-ios-android-apps/learn/lecture/37131054#content) Udemy course as well as some of my personal Flutter projects.
