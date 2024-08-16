@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:second_app/data/questions_file.dart';
 import 'package:second_app/home_page.dart';
 import 'package:second_app/questions.dart';
+import 'package:second_app/results_screen.dart';
 
 class Quiz extends StatefulWidget {
   const Quiz({super.key});
@@ -12,6 +14,7 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
+  List<String> selectedAnswers = [];
   var activeScreen = 'start-screen';
 
   void switchScreen() {
@@ -19,13 +22,35 @@ class _QuizState extends State<Quiz> {
       activeScreen = "questions-screen";
     });
   }
+  void restartQuiz() {
+    setState(() {
+      activeScreen = 'home-screen';
+      selectedAnswers.clear();
+    });
+  }
+
+  void chosenAnswer(String answer) { 
+    selectedAnswers.add(answer);
+    if(selectedAnswers.length == questions.length){
+      setState(() {
+        activeScreen = "results-screen";  
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget screenWidget =  HomePage(switchScreen);
 
     if (activeScreen == "questions-screen") {
-      screenWidget = const Questions();
+      screenWidget =  Questions(chosenAnswer);
+    }
+
+    if (activeScreen == "results-screen"){
+      screenWidget =  ResultsScreen(selectedAnswers,restartQuiz);
+    }
+    if(activeScreen == 'home-screen'){
+      screenWidget = HomePage(switchScreen);
     }
 
 
@@ -38,8 +63,8 @@ class _QuizState extends State<Quiz> {
               end: Alignment.topCenter,
               begin: Alignment.bottomCenter,
               colors: [
-                Color.fromARGB(255, 111, 242, 178),
-                Color.fromARGB(255, 3, 137, 112)
+                Color.fromARGB(255, 12, 206, 220),
+                Color.fromARGB(255, 3, 149, 159)
               ],
             ),
           ),
