@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:expense_tracker_app/models/expense.dart';
 import 'package:expense_tracker_app/main.dart';
-/* class ChartBar extends StatelessWidget {
+
+class ChartBar extends StatelessWidget {
   const ChartBar({
     super.key,
     required this.fill,
@@ -33,9 +34,9 @@ import 'package:expense_tracker_app/main.dart';
       ),
     );
   }
-} */
+}
 
-PieChartSectionData buildPieChartSection({
+/* PieChartSectionData buildPieChartSection({
   required double value,
   required Color color,
   required String title,
@@ -90,5 +91,5 @@ PieChartData getPieChartData(List<Expense> expenses) {
         title: workExpenses.toStringAsFixed(2),
       ),
     ],
-  );
-}
+  ); 
+}*/
