@@ -95,6 +95,7 @@ class Chart extends StatelessWidget {
     );
   }
 }
+
 /* 
 class MainChart extends StatelessWidget {
   final List<Expense> expenses;
