@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// ignore: unused_import
 import 'package:flutter_internals/ui_updates_demo.dart';
 import 'package:flutter_internals/keys/keys.dart';
 

@@ -57,6 +57,7 @@ const availableCategories = [
   ),
 ];
 
+// ignore: constant_identifier_names
 const dummyrestaurant_app = [
   Meal(
     id: 'm1',

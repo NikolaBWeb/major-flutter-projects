@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 class UIUpdatesDemo extends StatefulWidget {
   const UIUpdatesDemo({super.key});
 
+
   @override
+  // ignore: unnecessary_overrides
   StatefulElement createElement() {
-    print('UIUpdatesDemo CREATEELEMENT called');
     return super.createElement();
   }
 
@@ -20,7 +21,6 @@ class _UIUpdatesDemo extends State<UIUpdatesDemo> {
 
   @override
   Widget build(BuildContext context) {
-    print('UIUpdatesDemo BUILD called');
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(
