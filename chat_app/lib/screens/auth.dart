@@ -1,4 +1,12 @@
+import 'dart:io';
+
+import 'package:chat_app/widgets/user_image_picker.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebase = FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -9,14 +17,51 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   var _enteredEmail = "";
-  final _enteredPassword = "";
+  var _enteredPassword = ""; // Change this line
   final _formKey = GlobalKey<FormState>();
   var _isLoggedIn = true;
+  File? _selectedImage;
 
-  void _submit() {
+  void _submit() async {
     final isValid = _formKey.currentState!.validate();
     if (isValid) {
       _formKey.currentState!.save();
+      if (!_isLoggedIn) {
+        if (_selectedImage == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Please pick an image"),
+            ),
+          );
+          return;
+        }
+      }
+
+      try {
+        if (_isLoggedIn) {
+          final userCredentials = await _firebase.signInWithEmailAndPassword(
+              email: _enteredEmail, password: _enteredPassword);
+        } else {
+          final userCredentials =
+              await _firebase.createUserWithEmailAndPassword(
+                  email: _enteredEmail, password: _enteredPassword);
+          final storageRef = FirebaseStorage.instance
+              .ref('user_images')
+              .child('${userCredentials.user!.uid}.jpg');
+          await storageRef.putFile(_selectedImage!);
+          final url = await storageRef.getDownloadURL();
+          print(url);
+        }
+      } on FirebaseAuthException catch (e) {
+        if (!mounted) return; // Check if the widget is still mounted
+        print(e);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? "Authentication failed"),
+          ),
+        );
+      }
     }
   }
 
@@ -43,63 +88,76 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: "Email Address",
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            autocorrect: false,
-                            textCapitalization: TextCapitalization.none,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.trim().isEmpty ||
-                                  !value.contains("@")) {
-                                return "Please enter a valid email address";
-                              }
-                              return null;
-                            },
-                            onSaved: (value) {
-                              _enteredEmail = value!;
-                            },
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!_isLoggedIn)
+                          UserImagePicker(imagePickFn: (image) {
+                            _selectedImage = image;
+                          }),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: "Email Address",
                           ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                              labelText: "Password",
-                            ),
-                            obscureText: true,
-                            validator: (value) {
-                              if (value == null || value.trim().length < 6) {
-                                return ' Password must be at least 6 characters long';
-                              }
-                              return null;
-                            },
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          textCapitalization: TextCapitalization.none,
+                          validator: (value) {
+                            if (value == null ||
+                                value.trim().isEmpty ||
+                                !value.contains("@")) {
+                              return "Please enter a valid email address";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            _enteredEmail = value!;
+                          },
+                        ),
+                        TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: "Password",
                           ),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: _submit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .primaryContainer,
-                            ),
-                            child: Text(_isLoggedIn ? " Login" : "Signup"),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.trim().length < 6) {
+                              return ' Password must be at least 6 characters long';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            // Add this onSaved callback
+                            _enteredPassword = value!;
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primaryContainer,
                           ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLoggedIn = !_isLoggedIn;
-                              });
-                            },
-                            child: Text(_isLoggedIn
+                          child: Text(_isLoggedIn ? " Login" : "Signup"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLoggedIn = !_isLoggedIn;
+                            });
+                          },
+                          child: Text(
+                            _isLoggedIn
                                 ? "Create an account"
-                                : "I already have an account."),
-                          )
-                        ],
-                      )),
+                                : "I already have an account.",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
