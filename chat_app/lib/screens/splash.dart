@@ -12,7 +12,8 @@ class SplashScreen extends StatelessWidget {
         title: const Text("Flutter Chat"), // Title remains the same
       ),
       body: const Center(
-        child: Text("Loading..."), // Body remains the same
+        child: Text("Loading..."),
+         // Body remains the same
       ),
     );
   }

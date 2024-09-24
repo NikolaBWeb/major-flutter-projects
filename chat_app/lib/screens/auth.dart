@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:chat_app/widgets/user_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -78,7 +78,7 @@ class _AuthScreenState extends State<AuthScreen> {
         }
       } on FirebaseAuthException catch (e) {
         if (!mounted) return; // Check if the widget is still mounted
-        print(e);
+      
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -90,7 +90,7 @@ class _AuthScreenState extends State<AuthScreen> {
         });
       } catch (e) {
         // Handle any other exceptions
-        print(e);
+        
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
