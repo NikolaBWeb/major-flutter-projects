@@ -27,6 +27,12 @@ class PlacesList extends StatelessWidget {
                         .onSurface, // Use onSurface for better contrast
                   ),
                 ),
+                subtitle: Text(
+                  places[index].location.address,
+                  style: theme.textTheme.bodySmall!.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
