@@ -1,16 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neuroblast_dashboard/providers/content_provider.dart';
+import 'package:neuroblast_dashboard/screens/analytics/analytics_screen.dart';
+import 'package:neuroblast_dashboard/screens/home/home_screen.dart';
 import 'package:neuroblast_dashboard/screens/patients/add_patients.dart';
 import 'package:neuroblast_dashboard/screens/patients/patients.dart';
 import 'package:neuroblast_dashboard/widgets/button/text_button_hover.dart';
-import 'package:neuroblast_dashboard/screens/analytics/analytics_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:neuroblast_dashboard/providers/content_provider.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patient_details.dart';
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
+  @override
+  Widget build(BuildContext context) {
     final content = ref.watch(contentProvider).content;
     print(content);
 
@@ -19,7 +27,7 @@ class MainScreen extends ConsumerWidget {
         preferredSize: const Size.fromHeight(
           kToolbarHeight + 2, // Increased height to align with the row
         ),
-        child: Column(
+        child: Stack(
           children: [
             AppBar(
               automaticallyImplyLeading: false,
@@ -51,6 +59,19 @@ class MainScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+              actions: [
+                IconButton(
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => const HomeScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.logout_rounded),
+                ),
+              ],
             ),
           ],
         ),

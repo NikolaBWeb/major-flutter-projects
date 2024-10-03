@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "410572097735",
+    "project_id": "neuroblast-dashboard",
+    "storage_bucket": "neuroblast-dashboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410572097735:android:d4a218d4e6928dfffd16e2",
+        "android_client_info": {
+          "package_name": "com.example.neuroblast_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsTu8g0wpAaP184l6ai_A5qTfRoMZw3n8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410572097735:android:5c3326c05f42dce5fd16e2",
+        "android_client_info": {
+          "package_name": "om.example.neuroblast_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsTu8g0wpAaP184l6ai_A5qTfRoMZw3n8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,6 +8,7 @@ class Patient {
     required this.age,
     required this.diagnosis,
   });
+
   final String name;
   final String surname;
   final String gender;

@@ -6,6 +6,6 @@ linter:
     # Add or customize specific lint rules from Flutter Lints if needed.
     # For example, to enable `always_use_package_imports` from flutter_lints:
     always_use_package_imports: true
-    
+    public_member_api_docs: true
     # Disable `avoid_print` to allow print statements
     avoid_print: false

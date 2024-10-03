@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:neuroblast_dashboard/screens/main/main_screen.dart';
+
+final _firebase = FirebaseAuth.instance;
 
 class AuthForm extends StatefulWidget {
   const AuthForm({super.key});
@@ -9,26 +12,68 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  String _enteredEmail = '';
+  String _enteredPassword = '';
+  bool _isLogin = true;
   final _formKey = GlobalKey<FormState>();
-  bool isLogin = true;
 
   // Form field controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
+  Future<void> _submit() async {
+    final isValid = _formKey.currentState!.validate();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data saved successfully!')),
-      );
-      Navigator.of(context).push<MaterialPageRoute<void>>(
-        MaterialPageRoute(
-          builder: (BuildContext ctx) => const MainScreen(),
+    if (!isValid) {
+      return;
+    }
+
+    _formKey.currentState!.save();
+
+    _enteredEmail = _emailController.text.trim();
+    _enteredPassword = _passwordController.text.trim();
+
+    try {
+      UserCredential userCredentials;
+
+      if (_isLogin) {
+        userCredentials = await _firebase.signInWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
+      } else {
+        userCredentials = await _firebase.createUserWithEmailAndPassword(
+          email: _enteredEmail,
+          password: _enteredPassword,
+        );
+      }
+
+      // Navigate to the MainScreen after successful authentication
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (BuildContext context) => const MainScreen(),
         ),
       );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        if (mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'This email is already in use. Please use a different email.',
+              ),
+            ),
+          );
+        }
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.message ?? 'Authentication failed'),
+          ),
+        );
+        print(e.message);
+      }
     }
   }
 
@@ -102,18 +147,18 @@ class _AuthFormState extends State<AuthForm> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text(isLogin ? 'Login' : 'SignUp'),
+                child: Text(_isLogin ? 'Login' : 'SignUp'),
               ),
               const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
                   setState(() {
-                    isLogin = !isLogin;
+                    _isLogin = !_isLogin;
                   });
                 },
                 child: Text(
-                  isLogin
-                      ? 'Create an account '
+                  _isLogin
+                      ? "Don't have access? "
                       : 'Already have an account? Login',
                 ),
               ),

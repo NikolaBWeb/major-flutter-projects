@@ -1,13 +1,34 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:neuroblast_dashboard/screens/home/home_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:neuroblast_dashboard/firebase_options.dart';
+import 'package:neuroblast_dashboard/screens/home/home_screen.dart';
+import 'package:neuroblast_dashboard/screens/main/main_screen.dart';
+import 'package:neuroblast_dashboard/screens/main/splash.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
+/// The main application widget that serves as the entry point
+/// for the NeuroBlast Dashboard.
+/// This widget is responsible for setting up the MaterialApp
+///  and defining the overall  theme
+/// and home screen of the application. It uses the ProviderScope
+/// to enable state  management throughout the app.
+///
 class MyApp extends StatelessWidget {
+  /// Creates an instance of [MyApp].
+  ///
+  /// The [key] parameter is used to uniquely identify the widget
+  /// in the widget tree. It is optional and can be used for
+  /// widget state management.
   const MyApp({super.key});
 
   @override
@@ -15,12 +36,31 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'NeuroBlast Dashboard',
       theme: appTheme, // Add your theme here
-      home: const HomeScreen(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          print('Current user: ${snapshot.data}');
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SplashScreen();
+          }
+          if (snapshot.hasData) {
+            return const MainScreen();
+          }
+          return const MainScreen();
+        },
+      ),
     );
   }
 }
 
 // Your previous theme definition can be included here
+/// Defines the application's theme data for the NeuroBlast Dashboard.
+///
+/// This theme includes settings for primary and secondary colors,
+/// background colors, AppBar styles, button styles, text styles,
+/// icon themes, and floating action button themes. It utilizes
+/// the Google Fonts package to apply custom fonts to the text
+/// elements throughout the application.
 final ThemeData appTheme = ThemeData(
   // Primary color
   primaryColor: const Color(0xFF656B84),
@@ -55,13 +95,13 @@ final ThemeData appTheme = ThemeData(
   // Text theme
   textTheme: TextTheme(
     bodyLarge: GoogleFonts.lato(
-      color: const Color(0xFF9FA1AC),
+      color: Colors.black,
     ),
     bodyMedium: GoogleFonts.lato(
-      color: const Color(0xFF656B84),
+      color: Colors.black,
     ),
     headlineMedium: GoogleFonts.lato(
-      color: Colors.white,
+      color: Colors.black,
     ),
   ),
 

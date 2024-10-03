@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patient_info_row.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patients_list.dart';
 
 class PatientsScreen extends ConsumerStatefulWidget {
   const PatientsScreen({super.key});
@@ -61,8 +62,10 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
         ),
       ),
       body: const Column(
+        // Change from Column to ListView
         children: [
           PatientInfoRow(),
+          Expanded(child: PatientList()),
         ],
       ),
     );

@@ -12,6 +12,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             AppBar(
+              automaticallyImplyLeading: false,
               title: RichText(
                 text: const TextSpan(
                   children: [
