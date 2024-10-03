@@ -215,7 +215,7 @@ class PatientDetails extends StatelessWidget {
               ),
             ],
           ),
-          PatientNotes(patientId: patientId),
+          /* PatientNotes(patientId: patientId), */
         ],
       ),
     );
