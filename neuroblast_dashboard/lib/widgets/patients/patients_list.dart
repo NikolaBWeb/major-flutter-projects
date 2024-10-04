@@ -4,7 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patient_details.dart';
 
+/// A widget that displays a list of patients.
+///
+/// This widget uses [ConsumerStatefulWidget] to enable state management
+/// with Riverpod. It fetches patient data from Firestore and displays
+/// it in a scrollable list.
+///
+/// The list updates in real-time as changes occur in the Firestore database.
 class PatientList extends ConsumerStatefulWidget {
+  // ignore: public_member_api_docs
   const PatientList({super.key});
 
   @override
@@ -24,12 +32,8 @@ class _PatientListState extends ConsumerState<PatientList> {
           .snapshots(),
       builder: (context, snapshot) {
         // Add debug prints
-        print('Connection state: ${snapshot.connectionState}');
-        print('Has error: ${snapshot.hasError}');
+
         if (snapshot.hasError) print('Error: ${snapshot.error}');
-        print('Has data: ${snapshot.hasData}');
-        if (snapshot.hasData)
-          print('Number of documents: ${snapshot.data!.docs.length}');
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -51,7 +55,6 @@ class _PatientListState extends ConsumerState<PatientList> {
               final patient = patients[index].data()! as Map<String, dynamic>;
               final clickedPatientId = patients[index].id;
               // Add debug print for each patient
-              print('Patient $index: $patient');
 
               return ListTile(
                 title: Text('${patient['name']} ${patient['surname']}'),
@@ -71,7 +74,7 @@ class _PatientListState extends ConsumerState<PatientList> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
+                    MaterialPageRoute<void>(
                       builder: (context) => PatientDetails(
                         name: patient['name'] as String,
                         surname: patient['surname'] as String,

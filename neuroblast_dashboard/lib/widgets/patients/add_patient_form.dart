@@ -70,13 +70,15 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
       setState(() {
         _isSending = false;
       });
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Patient added successfully!'),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Patient added successfully!'),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+        );
+      }
     }
   }
 
@@ -217,10 +219,15 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                     const SizedBox(
                       width: 13,
                       height: 13,
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
                     )
                   else
-                    const Icon(Icons.add), // Display "add" icon otherwise
+                    const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ), // Display "add" icon otherwise
                   const SizedBox(width: 10), // Space between icon and text
                   const Text('Add patient'),
                 ],

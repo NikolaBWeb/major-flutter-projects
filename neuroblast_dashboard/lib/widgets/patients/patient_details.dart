@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patient_neuroblast.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patient_notes.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patient_tasks.dart';
 
-class PatientDetails extends StatelessWidget {
+class PatientDetails extends StatefulWidget {
   const PatientDetails({
     required this.name,
     required this.surname,
@@ -18,6 +20,20 @@ class PatientDetails extends StatelessWidget {
   final String gender;
   final String primaryDiagnosis;
   final String patientId;
+
+  @override
+  State<PatientDetails> createState() => _PatientDetailsState();
+}
+
+class _PatientDetailsState extends State<PatientDetails> {
+  late Widget content;
+  String activeTab = 'notes';
+
+  @override
+  void initState() {
+    super.initState();
+    content = PatientNotes(patientId: widget.patientId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +61,7 @@ class PatientDetails extends StatelessWidget {
                 child: Container(
                   margin: const EdgeInsets.only(top: 10, left: 10, bottom: 10),
                   height: 200,
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -54,10 +70,11 @@ class PatientDetails extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$name $surname',
-                        style: const TextStyle(
+                        '${widget.name} ${widget.surname}',
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -72,14 +89,14 @@ class PatientDetails extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: ': ',
+                              text: ' : ',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             TextSpan(
-                              text: patientId,
+                              text: widget.patientId,
                               style: const TextStyle(
                                 fontSize: 15,
                                 color: Colors.black,
@@ -88,6 +105,7 @@ class PatientDetails extends StatelessWidget {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 5),
                       RichText(
                         text: TextSpan(
                           children: [
@@ -99,14 +117,14 @@ class PatientDetails extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: ': ',
+                              text: ' : ',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             TextSpan(
-                              text: age,
+                              text: widget.age,
                               style: const TextStyle(
                                 fontSize: 15,
                                 color: Colors.black,
@@ -115,6 +133,7 @@ class PatientDetails extends StatelessWidget {
                           ],
                         ),
                       ),
+                      const SizedBox(height: 5),
                       RichText(
                         text: TextSpan(
                           children: [
@@ -126,14 +145,14 @@ class PatientDetails extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: ': ',
+                              text: ' : ',
                               style: TextStyle(
                                 fontSize: 15,
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             TextSpan(
-                              text: gender,
+                              text: widget.gender,
                               style: const TextStyle(
                                 fontSize: 15,
                                 color: Colors.black,
@@ -155,14 +174,14 @@ class PatientDetails extends StatelessWidget {
                               ),
                             ),
                             TextSpan(
-                              text: ': ',
+                              text: ' : ',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                             ),
                             TextSpan(
-                              text: primaryDiagnosis,
+                              text: widget.primaryDiagnosis,
                               style: const TextStyle(
                                 fontSize: 20,
                                 color: Colors.black,
@@ -180,7 +199,7 @@ class PatientDetails extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(3),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -188,25 +207,69 @@ class PatientDetails extends StatelessWidget {
                     Row(
                       children: [
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            setState(() {
+                              activeTab = 'notes';
+                              content = PatientNotes(
+                                patientId: widget.patientId,
+                              );
+                            });
+                          },
                           style: TextButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
+                            backgroundColor: activeTab == 'notes'
+                                ? Theme.of(context).colorScheme.secondary
+                                : null,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Notes',
-                            style: TextStyle(color: Colors.white),
+                            style: activeTab == 'notes'
+                                ? const TextStyle(color: Colors.white)
+                                : null,
                           ),
                         ),
                         const SizedBox(width: 10),
                         TextButton(
-                          onPressed: () {},
-                          child: const Text('Tasks'),
+                          onPressed: () {
+                            setState(() {
+                              activeTab = 'tasks';
+                              content = PatientTasks(
+                                patientId: widget.patientId,
+                              );
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: activeTab == 'tasks'
+                                ? Theme.of(context).colorScheme.secondary
+                                : null,
+                          ),
+                          child: Text(
+                            'Tasks',
+                            style: activeTab == 'tasks'
+                                ? const TextStyle(color: Colors.white)
+                                : null,
+                          ),
                         ),
                         const SizedBox(width: 10),
                         TextButton(
-                          onPressed: () {},
-                          child: const Text('Neuroblast'),
+                          onPressed: () {
+                            setState(() {
+                              activeTab = 'neuroblast';
+                              content = PatientNeuroblast(
+                                patientId: widget.patientId,
+                              );
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: activeTab == 'neuroblast'
+                                ? Theme.of(context).colorScheme.secondary
+                                : null,
+                          ),
+                          child: Text(
+                            'Neuroblast',
+                            style: activeTab == 'neuroblast'
+                                ? const TextStyle(color: Colors.white)
+                                : null,
+                          ),
                         ),
                       ],
                     ),
@@ -215,7 +278,7 @@ class PatientDetails extends StatelessWidget {
               ),
             ],
           ),
-          /* PatientNotes(patientId: patientId), */
+          content,
         ],
       ),
     );

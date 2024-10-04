@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:neuroblast_dashboard/screens/main/main_screen.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -34,26 +33,19 @@ class _AuthFormState extends State<AuthForm> {
     _enteredPassword = _passwordController.text.trim();
 
     try {
-      UserCredential userCredentials;
-
       if (_isLogin) {
-        userCredentials = await _firebase.signInWithEmailAndPassword(
+        await _firebase.signInWithEmailAndPassword(
           email: _enteredEmail,
           password: _enteredPassword,
         );
       } else {
-        userCredentials = await _firebase.createUserWithEmailAndPassword(
+        await _firebase.createUserWithEmailAndPassword(
           email: _enteredEmail,
           password: _enteredPassword,
         );
       }
-
-      // Navigate to the MainScreen after successful authentication
-      Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (BuildContext context) => const MainScreen(),
-        ),
-      );
+      // Remove any manual navigation here
+      // The StreamBuilder in main.dart will handle the navigation
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         if (mounted) {

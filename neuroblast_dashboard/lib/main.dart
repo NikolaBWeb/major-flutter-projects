@@ -35,18 +35,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NeuroBlast Dashboard',
+
       theme: appTheme, // Add your theme here
-      home: StreamBuilder(
+      home: StreamBuilder<User?>(
+        // Updated to use User? as the type
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          print('Current user: ${snapshot.data}');
+          print('Connection state: ${snapshot.connectionState}');
+          print('Has error: ${snapshot.hasError}');
+          print('Has data: ${snapshot.hasData}');
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SplashScreen();
-          }
-          if (snapshot.hasData) {
+          } else if (snapshot.hasError) {
+            print('Error: ${snapshot.error}');
+            return Center(
+              child: Text('Something went wrong: ${snapshot.error}'),
+            );
+          } else if (snapshot.hasData) {
+            print('User is signed in, navigating to MainScreen');
             return const MainScreen();
+          } else {
+            print('No user signed in, showing HomeScreen');
+            return const HomeScreen();
           }
-          return const MainScreen();
         },
       ),
     );
