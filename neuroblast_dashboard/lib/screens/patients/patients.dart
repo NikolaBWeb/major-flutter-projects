@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
+import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patient_info_row.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patients_list.dart';
 
@@ -14,6 +15,7 @@ class PatientsScreen extends ConsumerStatefulWidget {
 class _PatientsScreenState extends ConsumerState<PatientsScreen> {
   @override
   Widget build(BuildContext context) {
+    print('Building PatientsScreen'); // Add this debug print
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -30,6 +32,13 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
                 const Text(
                   'PATIENTS',
                   style: TextStyle(color: Colors.black),
+                ),
+                const Spacer(),
+                OutlinedButton(
+                  onPressed: () {
+                    ref.read(patientsProvider.notifier).clearAllPatients();
+                  },
+                  child: const Text('Clear All'),
                 ),
                 const Spacer(),
                 OutlinedButton.icon(

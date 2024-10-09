@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// to the UI when the content changes. It holds a single piece of content
 /// as a string and provides methods to access and update this content.
 class ContentProvider with ChangeNotifier {
-  String _content = 'Main Content';
+  String _content = 'Patients';
 
   /// Returns the current content.
   ///

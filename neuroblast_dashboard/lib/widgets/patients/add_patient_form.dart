@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:neuroblast_dashboard/models/patient/patient.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
 import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 
@@ -18,10 +17,11 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
   bool _isSending = false;
 
   final TextEditingController _ageController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _surnameController = TextEditingController();
-  final TextEditingController _diagnosisController = TextEditingController();
+
+  String? _selectedGender;
+  String? _selectedDiagnosis;
 
   Future<void> _addPatient({
     required String name,
@@ -30,14 +30,23 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
     required String primaryDiagnosis,
     required String age,
   }) async {
-    await patientsDB.collection('patients').add({
-      'name': name,
-      'surname': surname,
-      'age': age,
-      'primaryDiagnosis': primaryDiagnosis,
-      'gender': gender,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await patientsDB.collection('patients').add({
+        'name': name,
+        'surname': surname,
+        'age': age,
+        'primaryDiagnosis': primaryDiagnosis,
+        'gender': gender,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error adding patient: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Future<void> _submitForm() async {
@@ -50,26 +59,17 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
       await _addPatient(
         name: _nameController.text,
         surname: _surnameController.text,
-        gender: _genderController.text,
-        primaryDiagnosis: _diagnosisController.text,
+        gender: _selectedGender!,
+        primaryDiagnosis: _selectedDiagnosis!,
         age: _ageController.text,
       );
-
-      // Update provider
-      ref.read(patientsProvider.notifier).addPatient(
-            Patient(
-              age: _ageController.text,
-              gender: _genderController.text,
-              name: _nameController.text,
-              surname: _surnameController.text,
-              diagnosis: _diagnosisController.text,
-            ),
-          );
+      
 
       // Reset sending state
       setState(() {
         _isSending = false;
       });
+
       if (mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -79,6 +79,13 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
           ),
         );
       }
+
+      // Reset form fields after successful submission
+      _formKey.currentState!.reset();
+      _selectedGender = null;
+      _selectedDiagnosis = null;
+
+      ref.read(contentProvider.notifier).updateContent('Patients');
     }
   }
 
@@ -121,7 +128,6 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
               ],
             ),
             const SizedBox(height: 16),
@@ -141,10 +147,8 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter an age';
                       }
-                      if (int.parse(value) > 120) {
-                        return 'Please enter a valid number';
-                      }
-                      if (int.tryParse(value) == null) {
+                      if (int.tryParse(value) == null ||
+                          int.parse(value) > 120) {
                         return 'Please enter a valid number';
                       }
                       return null;
@@ -157,17 +161,23 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                     decoration: const InputDecoration(
                       labelText: 'Patient Gender',
                     ),
-                    items: [
-                      'Male',
-                      'Female',
-                    ].map((String value) {
+                    value: _selectedGender,
+                    items: ['Male', 'Female'].map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),
                       );
                     }).toList(),
                     onChanged: (value) {
-                      _genderController.text = value!;
+                      setState(() {
+                        _selectedGender = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select a gender';
+                      }
+                      return null;
                     },
                   ),
                 ),
@@ -177,6 +187,7 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                     decoration: const InputDecoration(
                       labelText: 'Primary Diagnosis',
                     ),
+                    value: _selectedDiagnosis,
                     items: [
                       'Cerebral Palsy',
                       'Stroke',
@@ -189,28 +200,23 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                       );
                     }).toList(),
                     onChanged: (value) {
-                      _diagnosisController.text = value!;
+                      setState(() {
+                        _selectedDiagnosis = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please select a diagnosis';
+                      }
+                      return null;
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
               ],
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  // Process the form data
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Processing Data'),
-                    ),
-                  );
-                  await _submitForm();
-                  ref.read(contentProvider.notifier).updateContent('Patients');
-                  _isSending = false;
-                }
-              },
+              onPressed: _isSending ? null : _submitForm,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -227,8 +233,8 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
                     const Icon(
                       Icons.add,
                       color: Colors.white,
-                    ), // Display "add" icon otherwise
-                  const SizedBox(width: 10), // Space between icon and text
+                    ),
+                  const SizedBox(width: 10),
                   const Text('Add patient'),
                 ],
               ),

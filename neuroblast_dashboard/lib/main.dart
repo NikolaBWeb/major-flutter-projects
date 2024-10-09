@@ -16,19 +16,7 @@ void main() async {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-/// The main application widget that serves as the entry point
-/// for the NeuroBlast Dashboard.
-/// This widget is responsible for setting up the MaterialApp
-///  and defining the overall  theme
-/// and home screen of the application. It uses the ProviderScope
-/// to enable state  management throughout the app.
-///
 class MyApp extends StatelessWidget {
-  /// Creates an instance of [MyApp].
-  ///
-  /// The [key] parameter is used to uniquely identify the widget
-  /// in the widget tree. It is optional and can be used for
-  /// widget state management.
   const MyApp({super.key});
 
   @override
@@ -41,22 +29,15 @@ class MyApp extends StatelessWidget {
         // Updated to use User? as the type
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          print('Connection state: ${snapshot.connectionState}');
-          print('Has error: ${snapshot.hasError}');
-          print('Has data: ${snapshot.hasData}');
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SplashScreen();
           } else if (snapshot.hasError) {
-            print('Error: ${snapshot.error}');
             return Center(
               child: Text('Something went wrong: ${snapshot.error}'),
             );
           } else if (snapshot.hasData) {
-            print('User is signed in, navigating to MainScreen');
             return const MainScreen();
           } else {
-            print('No user signed in, showing HomeScreen');
             return const HomeScreen();
           }
         },

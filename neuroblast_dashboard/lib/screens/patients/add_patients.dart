@@ -13,6 +13,7 @@ class AddPatients extends ConsumerStatefulWidget {
 class _AddPatientsState extends ConsumerState<AddPatients> {
   @override
   Widget build(BuildContext context) {
+    print('Building AddPatients'); // Add this debug print
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,

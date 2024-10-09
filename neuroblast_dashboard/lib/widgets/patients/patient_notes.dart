@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:neuroblast_dashboard/models/patient/patient.dart';
 import 'package:neuroblast_dashboard/widgets/patients/hoverable_list_tile.dart';
 
 class PatientNotes extends StatefulWidget {
@@ -20,43 +21,51 @@ class _PatientNotesState extends State<PatientNotes> {
   bool isSending = false;
 
   Future<void> addPatientNote() async {
-    if (_noteController.text.isEmpty) return;
+    final noteText = _noteController.text.trim();
+    if (noteText.isEmpty) {
+      // Show message if note is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a note before adding')),
+      );
+      return;
+    }
 
     setState(() {
       _isAddingNote = true;
       isSending = true;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Adding note...'),
-      ),
-    );
 
-    await FirebaseFirestore.instance
-        .collection('patients')
-        .doc(widget.patientId)
-        .collection('notes')
-        .add({
-      'note': _noteController.text,
-      'createdAt': Timestamp.now(),
-    });
-    if (mounted) {
-      ScaffoldMessenger.of(context).clearSnackBars();
+    try {
+      // Add the note to the "notes" subcollection within the "patients" collection
+      await FirebaseFirestore.instance
+          .collection('patients')
+          .doc(widget.patientId)
+          .collection('notes') // Subcollection for notes
+          .add({
+        'note': noteText,
+        'createdAt': Timestamp.now(),
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Note added successfully')),
+        );
+      }
+
+      // Clear the text field
+      _noteController.clear();
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Note added successfully'),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-        ),
+        SnackBar(content: Text('Failed to add note: $e')),
       );
+    } finally {
+      setState(() {
+        _isAddingNote = false;
+        isSending = false;
+      });
+
+      Navigator.pop(context); // Close the modal bottom sheet
     }
-
-    setState(() {
-      _isAddingNote = false;
-      _noteController.clear(); // Clear the note field after adding
-      isSending = false;
-    });
-
-    Navigator.pop(context); // Close the bottom sheet
   }
 
   Future<void> deletePatientNote(String noteId) async {
@@ -119,7 +128,7 @@ class _PatientNotesState extends State<PatientNotes> {
               ),
               const SizedBox(height: 10),
               Expanded(
-                child: StreamBuilder(
+                child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('patients')
                       .doc(widget.patientId)
@@ -138,15 +147,16 @@ class _PatientNotesState extends State<PatientNotes> {
                     return ListView.builder(
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
-                        final doc = snapshot.data!.docs[index];
-                        final note = doc['note'] as String;
-                        final createdAt = doc['createdAt'] as Timestamp;
-                        final noteId = doc.id;
+                        final noteDoc = snapshot.data!.docs[index];
+                        final note = noteDoc['note'] as String;
+                        final createdAt = noteDoc['createdAt'] as Timestamp;
 
                         return HoverableListTile(
                           note: note,
                           createdAt: createdAt,
-                          onDelete: () => deletePatientNote(noteId),
+                          onDelete: () {
+                            deletePatientNote(noteDoc.id); // Delete the note
+                          },
                         );
                       },
                     );
@@ -176,7 +186,6 @@ class _PatientNotesState extends State<PatientNotes> {
                           margin: const EdgeInsets.all(10),
                           padding: const EdgeInsets.all(16),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               TextField(
                                 controller: _noteController,
@@ -186,14 +195,21 @@ class _PatientNotesState extends State<PatientNotes> {
                                 ),
                                 maxLines: 3,
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 15),
                               ElevatedButton(
+                                // This button is used to add a new patient note
+                                // It is disabled when a note is currently
+                                // being sent
                                 onPressed: isSending
                                     ? null
                                     : () {
+                                        // Set the sending state to true when
+                                        //the button is pressed
                                         setModalState(() {
                                           isSending = true;
                                         });
+                                        // Call the addPatientNote function and
+                                        //update the state when it's done
                                         addPatientNote().then((_) {
                                           setModalState(() {
                                             isSending = false;
@@ -232,6 +248,7 @@ class _PatientNotesState extends State<PatientNotes> {
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 5),
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
                                 child: const Text('Close'),

@@ -1,59 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:neuroblast_dashboard/models/patient/patient.dart';
+import 'package:neuroblast_dashboard/providers/patients_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patient_details.dart';
 
-
-
-/// A widget that displays a row of patient information including
-/// Name, Gender, Age, and Primary Diagnosis.
-///
-/// This widget is designed to be used in a list of patients
-/// to provide a quick overview of each patient's details.
-class PatientInfoRow extends StatelessWidget {
-  /// Creates an instance of [PatientInfoRow].
-  ///
-  /// The [key] parameter is used to uniquely identify the widget
-  /// in the widget tree. It is optional and can be used for
-  /// widget state management.
+class PatientInfoRow extends ConsumerStatefulWidget {
   const PatientInfoRow({super.key});
 
   @override
+  ConsumerState<PatientInfoRow> createState() => _PatientInfoRowState();
+}
+
+class _PatientInfoRowState extends ConsumerState<PatientInfoRow> {
+  String query = '';
+
+  @override
   Widget build(BuildContext context) {
+    final patients = ref.watch(patientsProvider).patients ?? [];
+
     return Container(
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(15),
-            child: Text(
-              'Name',
-              style: TextStyle(color: Colors.white),
+            padding: const EdgeInsets.all(8),
+            child: SearchAnchor(
+              builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  padding: const WidgetStatePropertyAll<EdgeInsets>(
+                    EdgeInsets.symmetric(horizontal: 8),
+                  ),
+                  onTap: () {
+                    controller.openView();
+                  },
+                  onChanged: (String searchQuery) {
+                    setState(() {
+                      query = searchQuery;
+                    });
+                    controller.openView(); // Open suggestions view
+                  },
+                  leading: const Icon(Icons.search),
+                  hintText: 'Search patients...',
+                  shape: WidgetStatePropertyAll<OutlinedBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                );
+              },
+              suggestionsBuilder:
+                  (BuildContext context, SearchController controller) {
+                if (controller.text.isEmpty) {
+                  return [
+                    const ListTile(
+                      title: Text(
+                        'Type to search for patients by name and surname',
+                      ),
+                    ),
+                  ];
+                }
+                final searchTerms = controller.text.toLowerCase().split(' ');
+
+                final filteredPatients = patients.where((patient) {
+                  final fullName =
+                      '${patient.name} ${patient.surname}'.toLowerCase();
+                  return searchTerms.every(fullName.contains);
+                }).toList();
+
+                return List<ListTile>.generate(filteredPatients.length,
+                    (int index) {
+                  final patient = filteredPatients[index];
+                  return ListTile(
+                    title: Row(
+                      children: [
+                        Icon(
+                          patient.gender == 'Male'
+                              ? Icons.man_4
+                              : Icons.woman_2,
+                          color: patient.gender == 'Male'
+                              ? Colors.blue
+                              : Colors.pink,
+                        ),
+                        const SizedBox(width: 10),
+                        Text('${patient.name} ${patient.surname}'),
+                      ],
+                    ),
+                    onTap: () {
+                      setState(() {
+                        query = '${patient.name} ${patient.surname}';
+                      });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => PatientDetails(
+                            name: patient.name,
+                            surname: patient.surname,
+                            age: patient.age,
+                            gender: patient.gender,
+                            primaryDiagnosis: patient.diagnosis,
+                            patientId: patient.id,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                });
+              },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: Text(
-              'Gender',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: Text(
-              'Age',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: Text(
-              'Primary Diagnosis',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+          const Spacer(),
         ],
       ),
     );

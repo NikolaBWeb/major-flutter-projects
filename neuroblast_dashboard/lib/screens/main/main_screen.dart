@@ -31,7 +31,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final content = ref.watch(contentProvider).content;
-    print(content);
+    print('MainScreen content: $content'); // Add this debug print
 
     return Scaffold(
       appBar: PreferredSize(
@@ -98,11 +98,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           // Main Content Area
           Expanded(
             child: Center(
-              child: content == 'Analytics'
-                  ? const AnalyticsScreen()
-                  : content == 'Add Patients'
-                      ? const AddPatients()
-                      : const PatientsScreen(),
+              child: () {
+                if (content == 'Patients') {
+                  return const PatientsScreen();
+                } else if (content == 'Analytics') {
+                  return const AnalyticsScreen();
+                } else {
+                  return const AddPatients();
+                }
+              }(),
             ),
           ),
         ],

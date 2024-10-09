@@ -9,14 +9,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  void initState() {
-    super.initState();
-    print('SplashScreen initialized');
-  }
-
   @override
   Widget build(BuildContext context) {
-    print('SplashScreen built');
     return Scaffold(
       body: Center(
         child: Column(
