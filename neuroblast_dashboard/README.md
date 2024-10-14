@@ -61,10 +61,6 @@ The main application code is located in the `lib` directory. Key files and direc
 - `widgets/`: Contains reusable UI components.
 - `models/`: Defines data models used in the app.
 
-### Key Files
-
-#### main.dart
-
 
 ## Dependencies
 
