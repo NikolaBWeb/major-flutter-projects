@@ -53,7 +53,17 @@ This project is a Flutter application that integrates with Firebase for backend 
 
 ## Project Structure
 
-The main application code is located in the `lib` directory. Key files include:
+The main application code is located in the `lib` directory. Key files and directories include:
+
+- `main.dart`: Entry point for the application.
+- `providers/`: Contains state management providers.
+- `screens/`: Contains all screen widgets for the application.
+- `widgets/`: Contains reusable UI components.
+- `models/`: Defines data models used in the app.
+
+### Key Files
+
+#### main.dart
 
 
 ## Dependencies
