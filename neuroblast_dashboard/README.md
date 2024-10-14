@@ -60,6 +60,19 @@ The main application code is located in the `lib` directory. Key files and direc
 - `screens/`: Contains all screen widgets for the application.
 - `widgets/`: Contains reusable UI components.
 - `models/`: Defines data models used in the app.
+- 
+### Key Packages and Their Uses
+
+- **Firebase Suite**: `cloud_firestore`, `firebase_analytics`, `firebase_auth`, `firebase_core`, `firebase_storage`
+  - Provides backend services, authentication, and data storage.
+
+- **flutter_riverpod**: State management solution.
+
+- **google_fonts**: Easy integration of Google Fonts.
+
+- **very_good_analysis**: Provides additional lints for better code quality.
+
+- **fl_chart** and **syncfusion_flutter_charts**: Used for data visualization and charting.
 
 
 ## Dependencies
