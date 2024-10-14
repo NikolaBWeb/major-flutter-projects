@@ -75,24 +75,29 @@ The main application code is located in the `lib` directory. Key files and direc
 - **fl_chart** and **syncfusion_flutter_charts**: Used for data visualization and charting.
 
 
+
+### Without Code Block (Indented)
+
+If you prefer not to use a code block and want to list dependencies inline, make sure each dependency is on a new line, like this:
+
+```markdown
 ## Dependencies
 
 Key dependencies for this project include:
 
-dependencies:
-  flutter:
-    sdk: flutter
-  cloud_firestore: ^5.4.3
-  cupertino_icons: ^1.0.8
-  firebase_analytics: ^11.3.3
-  firebase_auth: ^5.3.1
-  firebase_core: ^3.6.0
-  firebase_storage: ^12.3.2
-  flutter_riverpod: ^2.5.1
-  google_fonts: ^6.2.1
-  very_good_analysis: ^6.0.0
-  fl_chart: ^0.69.0
-  syncfusion_flutter_charts: ^27.1.52
+- `flutter`: sdk: flutter
+- `cloud_firestore`: ^5.4.3
+- `cupertino_icons`: ^1.0.8
+- `firebase_analytics`: ^11.3.3
+- `firebase_auth`: ^5.3.1
+- `firebase_core`: ^3.6.0
+- `firebase_storage`: ^12.3.2
+- `flutter_riverpod`: ^2.5.1
+- `google_fonts`: ^6.2.1
+- `very_good_analysis`: ^6.0.0
+- `fl_chart`: ^0.69.0
+- `syncfusion_flutter_charts`: ^27.1.52
+
 
 ## Contributing
 
