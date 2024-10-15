@@ -98,6 +98,11 @@ dependencies:
 
 Contributions to the NeuroBlast Dashboard project are welcome. Please feel free to submit issues, fork the repository and send pull requests!
 
+## Future Features
+
+- Integration with more advanced analytics.
+- Enhanced user interface for better usability.
+- Offline data caching for improved performance.
 
 ## Contact
 
