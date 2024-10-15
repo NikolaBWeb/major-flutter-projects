@@ -60,8 +60,9 @@ The main application code is located in the `lib` directory. Key files and direc
 - `screens/`: Contains all screen widgets for the application, like Home, Patient Details, etc.
 - `widgets/`: Contains reusable UI components, such as buttons and cards.
 - `models/`: Defines data models used in the app, such as Patient and Note.
-- 
-### Key Packages and Their Uses
+
+
+## Key Packages and Their Uses
 
 - **Firebase Suite**: `cloud_firestore`, `firebase_analytics`, `firebase_auth`, `firebase_core`, `firebase_storage`
   - Provides backend services, authentication, and data storage.
@@ -74,7 +75,7 @@ The main application code is located in the `lib` directory. Key files and direc
 
 - **fl_chart** and **syncfusion_flutter_charts**: Used for data visualization and charting.
 
-## Dependencies
+### Dependencies
 
 ```yaml
 dependencies:
