@@ -56,10 +56,10 @@ This project is a Flutter application that integrates with Firebase for backend 
 The main application code is located in the `lib` directory. Key files and directories include:
 
 - `main.dart`: Entry point for the application.
-- `providers/`: Contains state management providers.
-- `screens/`: Contains all screen widgets for the application.
-- `widgets/`: Contains reusable UI components.
-- `models/`: Defines data models used in the app.
+- `providers/`: Contains state management providers for Riverpod.
+- `screens/`: Contains all screen widgets for the application, like Home, Patient Details, etc.
+- `widgets/`: Contains reusable UI components, such as buttons and cards.
+- `models/`: Defines data models used in the app, such as Patient and Note.
 - 
 ### Key Packages and Their Uses
 
