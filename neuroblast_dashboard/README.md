@@ -91,6 +91,7 @@ dependencies:
   very_good_analysis: ^6.0.0
   fl_chart: ^0.69.0
   syncfusion_flutter_charts: ^27.1.52
+```
 
 
 ## Contributing
