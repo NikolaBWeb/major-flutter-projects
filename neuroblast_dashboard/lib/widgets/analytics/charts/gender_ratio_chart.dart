@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 
 class GenderRatioChart extends ConsumerStatefulWidget {
   const GenderRatioChart({super.key});
@@ -30,7 +30,7 @@ class _GenderRatioChartState extends ConsumerState<GenderRatioChart> {
     final totalPatients = _malePatientsCount + _femalePatientsCount;
 
     return AspectRatio(
-      aspectRatio: 1.3,
+      aspectRatio: 1.4,
       child: Row(
         children: <Widget>[
           const Column(

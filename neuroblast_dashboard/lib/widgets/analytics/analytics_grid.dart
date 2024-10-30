@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neuroblast_dashboard/widgets/analytics/charts/decease_diversity_chart.dart';
 import 'package:neuroblast_dashboard/widgets/analytics/charts/gender_ratio_chart.dart';
+import 'package:neuroblast_dashboard/widgets/analytics/charts/patients_age_to_total.dart';
 import 'package:neuroblast_dashboard/widgets/analytics/charts/patients_by_date_chart.dart';
 
 class ChartsGrid extends StatelessWidget {
@@ -28,6 +29,10 @@ class ChartsGrid extends StatelessWidget {
         _buildChartContainer(
           title: 'Patients by Date',
           chart: const PatientsByDateChart(),
+        ),
+        _buildChartContainer(
+          title: 'Patients Age to Total',
+          chart: const PatientAgeToTotalChart(),
         ),
       ],
     );

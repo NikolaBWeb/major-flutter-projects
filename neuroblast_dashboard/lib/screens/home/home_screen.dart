@@ -47,11 +47,10 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Center(
         child: Container(
+          alignment: Alignment.center,
           // Optionally set a maximum width for the form
-          constraints: const BoxConstraints(
-            maxWidth: 400,
-            maxHeight: 400,
-          ), // Adjust max width as needed
+          height: double.infinity,
+          width: 400, // Adjust max width as needed
           padding:
               const EdgeInsets.all(16), // Optional: Add padding around the form
           child: const AuthContainer(),

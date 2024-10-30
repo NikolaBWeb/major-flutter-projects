@@ -7,31 +7,12 @@ import 'package:neuroblast_dashboard/screens/patients/add_patients.dart';
 import 'package:neuroblast_dashboard/screens/patients/patients.dart';
 import 'package:neuroblast_dashboard/widgets/button/text_button_hover.dart';
 
-class MainScreen extends ConsumerStatefulWidget {
+class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
 
   @override
-  ConsumerState<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends ConsumerState<MainScreen> {
-  Future<void> _signOut() async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      // Remove the manual navigation
-      // The StreamBuilder in main.dart will handle the navigation
-    } catch (e) {
-      print('Error signing out: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to sign out. Please try again.')),
-      );
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final content = ref.watch(contentProvider).content;
-    print('MainScreen content: $content'); // Add this debug print
 
     return Scaffold(
       appBar: PreferredSize(
@@ -58,59 +39,134 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     ),
                   ),
                   const Spacer(),
-                  const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Text(
-                      'Dr. John Doe',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
+                  TextButton(
+                    style: ButtonStyle(
+                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: const BorderSide(color: Colors.black26),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Row(
+                        children: [
+                          Text(
+                            (FirebaseAuth.instance.currentUser?.displayName ??
+                                    'User')
+                                .split(' ')
+                                .map(
+                                  (word) => word.isNotEmpty
+                                      ? word[0].toUpperCase()
+                                      : '',
+                                )
+                                .join(),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Icon(
+                            Icons.arrow_drop_down_outlined,
+                            color: Colors.black,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ],
               ),
-              actions: [
+              /* actions: [
                 IconButton(
-                  onPressed: _signOut,
+                  onPressed: () async {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      // Remove the manual navigation
+                      // The StreamBuilder in main.dart will handle the navigation
+                    } catch (e) {
+                      print('Error signing out: $e');
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content:
+                                Text('Failed to sign out. Please try again.'),
+                          ),
+                        );
+                      }
+                    }
+                  },
                   icon: const Icon(Icons.logout_rounded),
                 ),
-              ],
+              ], */
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                height: 1,
+                color: Colors.grey[300],
+              ),
             ),
           ],
         ),
       ),
       body: Row(
         children: [
-          // Vertical Navigation Bar
           Container(
             width: 200,
-            color: Colors.grey[200],
-            child: const Column(
+            color: Colors.white,
+            child: Column(
               children: [
-                SizedBox(height: 20), // Spacer
-                HoverTextButton(text: 'Patients', icon: Icons.people),
-                HoverTextButton(text: 'Analytics', icon: Icons.analytics),
-                // Add more navigation items here as needed
+                const SizedBox(height: 20),
+                _buildNavButton(ref, 'Patients', Icons.people, content),
+                _buildNavButton(ref, 'Analytics', Icons.analytics, content),
+                // Add more navigation items as needed
               ],
             ),
           ),
-          // Main Content Area
+          Container(
+            width: 1,
+            color: Colors.grey[200],
+          ),
           Expanded(
             child: Center(
-              child: () {
-                if (content == 'Patients') {
-                  return const PatientsScreen();
-                } else if (content == 'Analytics') {
-                  return const AnalyticsScreen();
-                } else {
-                  return const AddPatients();
-                }
-              }(),
+              child: _buildContent(content),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildNavButton(
+    WidgetRef ref,
+    String text,
+    IconData icon,
+    String currentContent,
+  ) {
+    return HoverTextButton(
+      text: text,
+      icon: icon,
+      isActive: currentContent == text,
+      onPressed: () => ref.read(contentProvider.notifier).updateContent(text),
+    );
+  }
+
+  Widget _buildContent(String content) {
+    switch (content) {
+      case 'Patients':
+        return const PatientsScreen();
+      case 'Analytics':
+        return const AnalyticsScreen();
+      case 'Add Patients':
+        return const AddPatients();
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }

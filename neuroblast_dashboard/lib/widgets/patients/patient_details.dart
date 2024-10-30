@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patient_neuroblast.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patient_notes.dart';
@@ -27,28 +28,87 @@ class PatientDetails extends StatefulWidget {
 
 class _PatientDetailsState extends State<PatientDetails> {
   late Widget content;
-  String activeTab = 'notes';
+  String activeTab = 'notes'; // Changed from 'neuroblast' to 'notes'
 
   @override
   void initState() {
     super.initState();
-    content = PatientNotes(patientId: widget.patientId);
+    content = PatientNotes(
+      patientId: widget.patientId,
+    ); // Changed from PatientNeuroblast to PatientNotes
+  }
+
+  Future<void> _removePatient() async {
+    await FirebaseFirestore.instance
+        .collection('patients')
+        .doc(widget.patientId)
+        .delete();
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Patient removed successfully',
+          ),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
+        title: const Row(
           children: [
-            const Text(
+            Text(
               'Patient Details',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.normal,
+              ),
             ),
-            const Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu),
+          ],
+        ),
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      size: 25,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              onTap: () {
+                _removePatient();
+                if (mounted) {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                }
+              },
+              leading: const Icon(
+                Icons.person_remove,
+                color: Colors.red,
+              ),
+              title: const Text('Remove Patient'),
+            ),
+            const ListTile(
+              title: Text('Notes'),
             ),
           ],
         ),
@@ -66,129 +126,147 @@ class _PatientDetailsState extends State<PatientDetails> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        '${widget.name} ${widget.surname}',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Icon(
+                          Icons.person,
+                          size: 100,
+                          color: widget.gender == 'Male'
+                              ? Colors.blue
+                              : Colors.pink,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Patient ID',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${widget.name} ${widget.surname}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
-                            TextSpan(
-                              text: ' : ',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
+                          ),
+                          const SizedBox(height: 10),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Patient ID',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' : ',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: widget.patientId,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: widget.patientId,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
+                          ),
+                          const SizedBox(height: 5),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Age',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' : ',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: widget.age,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Age',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
+                          ),
+                          const SizedBox(height: 5),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Gender',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' : ',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: widget.gender,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: ' : ',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
+                          ),
+                          const SizedBox(height: 10),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Primary Diagnosis',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' : ',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: widget.primaryDiagnosis,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                            TextSpan(
-                              text: widget.age,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Gender',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' : ',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                            TextSpan(
-                              text: widget.gender,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Primary Diagnosis',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' : ',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                            TextSpan(
-                              text: widget.primaryDiagnosis,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -220,11 +298,22 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ? Theme.of(context).colorScheme.secondary
                                 : null,
                           ),
-                          child: Text(
-                            'Notes',
-                            style: activeTab == 'notes'
-                                ? const TextStyle(color: Colors.white)
-                                : null,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.note_add,
+                                color: activeTab == 'notes'
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Notes',
+                                style: activeTab == 'notes'
+                                    ? const TextStyle(color: Colors.white)
+                                    : null,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -242,11 +331,22 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ? Theme.of(context).colorScheme.secondary
                                 : null,
                           ),
-                          child: Text(
-                            'Tasks',
-                            style: activeTab == 'tasks'
-                                ? const TextStyle(color: Colors.white)
-                                : null,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.task_alt,
+                                color: activeTab == 'tasks'
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Tasks',
+                                style: activeTab == 'tasks'
+                                    ? const TextStyle(color: Colors.white)
+                                    : null,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -264,11 +364,22 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ? Theme.of(context).colorScheme.secondary
                                 : null,
                           ),
-                          child: Text(
-                            'Neuroblast',
-                            style: activeTab == 'neuroblast'
-                                ? const TextStyle(color: Colors.white)
-                                : null,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.bar_chart,
+                                color: activeTab == 'neuroblast'
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Neuroblast',
+                                style: activeTab == 'neuroblast'
+                                    ? const TextStyle(color: Colors.white)
+                                    : null,
+                              ),
+                            ],
                           ),
                         ),
                       ],

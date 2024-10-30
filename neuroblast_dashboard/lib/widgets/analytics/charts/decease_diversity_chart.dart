@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/models/patient/patient.dart';
 import 'package:neuroblast_dashboard/providers/patients_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DeceaseDiversityChart extends ConsumerStatefulWidget {
   const DeceaseDiversityChart({super.key});
@@ -20,7 +20,7 @@ class _DeceaseDiversityChartState extends ConsumerState<DeceaseDiversityChart> {
     final patients = ref.watch(patientsProvider).patients;
 
     return AspectRatio(
-      aspectRatio: 1.3,
+      aspectRatio: 1.4,
       child: Row(
         children: <Widget>[
           const Expanded(
@@ -100,105 +100,51 @@ class _DeceaseDiversityChartState extends ConsumerState<DeceaseDiversityChart> {
   }
 
   List<PieChartSectionData> showingSections(List<Patient> patients) {
-    final strokePatients =
-        patients.where((patient) => patient.diagnosis == 'Stroke').length;
-    final cerebralPalsyPatients = patients
-        .where((patient) => patient.diagnosis == 'Cerebral Palsy')
-        .length;
-    final multipleSclerosisPatients = patients
-        .where((patient) => patient.diagnosis == 'Multiple Sclerosis')
-        .length;
-    final parkinsonsPatients = patients
-        .where((patient) => patient.diagnosis == "Parkinson's Disease")
-        .length;
+    final diagnosisCounts = {
+      'Stroke': 0,
+      'Cerebral Palsy': 0,
+      'Multiple Sclerosis': 0,
+      "Parkinson's Disease": 0,
+    };
 
-    return List.generate(4, (i) {
+    for (final patient in patients) {
+      if (diagnosisCounts.containsKey(patient.diagnosis)) {
+        diagnosisCounts[patient.diagnosis] =
+            diagnosisCounts[patient.diagnosis]! + 1;
+      }
+    }
+
+    final colors = [Colors.red, Colors.orange, Colors.purple, Colors.green];
+    final nonZeroDiagnoses =
+        diagnosisCounts.entries.where((entry) => entry.value > 0).toList();
+
+    return List.generate(nonZeroDiagnoses.length, (i) {
       final isTouched = i == touchedIndex;
       final fontSize = isTouched ? 20.0 : 15.0;
       final radius = isTouched ? 60.0 : 50.0;
-      const shadows = [Shadow(blurRadius: 2)];
+      const shadows = [Shadow(blurRadius: 1)];
       final borderWidth = isTouched ? 4 : 1;
 
-      switch (i) {
-        case 0:
-          return PieChartSectionData(
-            color: Colors.red,
-            value: strokePatients.toDouble(),
-            title: isTouched
-                ? strokePatients.toString()
-                : '${(strokePatients / patients.length * 100).toStringAsFixed(1)}%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-            borderSide: BorderSide(
-              color: Colors.white,
-              width: borderWidth.toDouble(),
-            ),
-          );
-        case 1:
-          return PieChartSectionData(
-            color: Colors.orange,
-            value: cerebralPalsyPatients.toDouble(),
-            title: isTouched
-                ? cerebralPalsyPatients.toString()
-                : '${(cerebralPalsyPatients / patients.length * 100).toStringAsFixed(1)}%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-            borderSide: BorderSide(
-              color: Colors.white,
-              width: borderWidth.toDouble(),
-            ),
-          );
-        case 2:
-          return PieChartSectionData(
-            color: Colors.purple,
-            value: multipleSclerosisPatients.toDouble(),
-            title: isTouched
-                ? multipleSclerosisPatients.toString()
-                : '${(multipleSclerosisPatients / patients.length * 100).toStringAsFixed(1)}%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-            borderSide: BorderSide(
-              color: Colors.white,
-              width: borderWidth.toDouble(),
-            ),
-          );
-        case 3:
-          return PieChartSectionData(
-            color: Colors.green,
-            value: parkinsonsPatients.toDouble(),
-            title: isTouched
-                ? parkinsonsPatients.toString()
-                : '${(parkinsonsPatients / patients.length * 100).toStringAsFixed(1)}%',
-            radius: radius,
-            titleStyle: TextStyle(
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: shadows,
-            ),
-            borderSide: BorderSide(
-              color: Colors.white,
-              width: borderWidth.toDouble(),
-            ),
-          );
-        default:
-          throw Error();
-      }
+      final diagnosis = nonZeroDiagnoses[i].key;
+      final count = nonZeroDiagnoses[i].value;
+      final percentage = (count / patients.length * 100).toStringAsFixed(1);
+
+      return PieChartSectionData(
+        color: colors[diagnosisCounts.keys.toList().indexOf(diagnosis)],
+        value: count.toDouble(),
+        title: isTouched ? count.toString() : '$percentage%',
+        radius: radius,
+        titleStyle: TextStyle(
+          fontSize: fontSize,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: shadows,
+        ),
+        borderSide: BorderSide(
+          color: Colors.white,
+          width: borderWidth.toDouble(),
+        ),
+      );
     });
   }
 }

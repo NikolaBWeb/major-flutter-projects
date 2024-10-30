@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 
 class PatientsByDateChart extends ConsumerStatefulWidget {
   const PatientsByDateChart({super.key});
@@ -77,19 +77,31 @@ class PatientsByDateChartState extends ConsumerState<PatientsByDateChart> {
           0;
     });
 
+    // Check if there's no data
+    if (monthlyPatientCounts.every((count) => count == 0)) {
+      return const Center(
+        child: Text(
+          'No data available',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
     // Calculate the maximum monthly count
     final maxMonthlyCount =
         monthlyPatientCounts.reduce((a, b) => a > b ? a : b);
 
-    // Calculate the Y-axis maximum (110% of the max monthly count)
-    final yAxisMax = (maxMonthlyCount * 1.1).ceil().toDouble();
+    // Calculate the Y-axis maximum (add one more interval)
+    final yAxisInterval = calculateYAxisInterval(maxMonthlyCount.toDouble());
+    final yAxisMax =
+        ((maxMonthlyCount / yAxisInterval).ceil() + 1) * yAxisInterval;
 
     return AspectRatio(
       aspectRatio: 1.3,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          maxY: yAxisMax, // Set the maximum Y value
+          maxY: yAxisMax,
           titlesData: FlTitlesData(
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -103,33 +115,48 @@ class PatientsByDateChartState extends ConsumerState<PatientsByDateChart> {
                 showTitles: true,
                 reservedSize: 30,
                 getTitlesWidget: (value, meta) {
+                  // Show all interval values including the max
+                  if (value == 0) return const Text('');
+                  if (value % yAxisInterval != 0) return const Text('');
                   return Text(value.toInt().toString());
                 },
-                interval:
-                    yAxisMax / 5, // Adjust interval for 5 labels on Y-axis
+                interval: yAxisInterval,
               ),
             ),
             topTitles: const AxisTitles(),
             rightTitles: const AxisTitles(),
           ),
           gridData: FlGridData(
-            checkToShowHorizontalLine: (value) => value % 10 == 0,
+            checkToShowHorizontalLine: (value) =>
+                value % yAxisInterval == 0 &&
+                value != 0, // Show lines at each interval
             getDrawingHorizontalLine: (value) => FlLine(
-              color: Colors.grey.withOpacity(0.1),
-              strokeWidth: 1,
+              color: Colors.grey.withOpacity(0.3),
+              strokeWidth: 1.5,
             ),
             drawVerticalLine: false,
           ),
           borderData: FlBorderData(
-            show: false,
+            border: const Border(
+              left: BorderSide(),
+              right: BorderSide(color: Colors.transparent),
+              top: BorderSide(color: Colors.transparent),
+              bottom: BorderSide(),
+            ),
           ),
           groupsSpace: 4.0 * 400 / 400,
           barGroups:
               getData(monthlyPatientCounts, 8.0 * 400 / 400, 4.0 * 400 / 400),
-          minY: 1, // Start from 1 to avoid logarithm of zero
+          minY: 0, // Changed from 1 to 0
         ),
       ),
     );
+  }
+
+  double calculateYAxisInterval(double yAxisMax) {
+    if (yAxisMax <= 5) return 1;
+    if (yAxisMax <= 10) return 2;
+    return (yAxisMax / 5).ceil().toDouble();
   }
 
   List<BarChartGroupData> getData(
