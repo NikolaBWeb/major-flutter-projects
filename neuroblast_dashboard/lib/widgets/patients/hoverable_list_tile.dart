@@ -38,7 +38,7 @@ class _HoverableListTileState extends State<HoverableListTile> {
               Expanded(
                 child: Text(
                   widget.note,
-                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
               ),
               const Spacer(), // Add spacer to push delete icon to the end

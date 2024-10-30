@@ -39,21 +39,50 @@ class _PatientDetailsState extends State<PatientDetails> {
   }
 
   Future<void> _removePatient() async {
-    await FirebaseFirestore.instance
-        .collection('patients')
-        .doc(widget.patientId)
-        .delete();
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+    // Show confirmation dialog
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Remove Patient'),
           content: const Text(
-            'Patient removed successfully',
+            'Are you sure you want to remove this patient? This action cannot be undone.',
           ),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-        ),
-      );
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('Remove'),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Only proceed with deletion if user confirmed
+    if (confirm == true) {
+      await FirebaseFirestore.instance
+          .collection('patients')
+          .doc(widget.patientId)
+          .delete();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Patient removed successfully',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
+        );
+      }
     }
   }
 
@@ -94,8 +123,8 @@ class _PatientDetailsState extends State<PatientDetails> {
               ),
             ),
             ListTile(
-              onTap: () {
-                _removePatient();
+              onTap: () async { 
+                await _removePatient();
                 if (mounted) {
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -106,9 +135,6 @@ class _PatientDetailsState extends State<PatientDetails> {
                 color: Colors.red,
               ),
               title: const Text('Remove Patient'),
-            ),
-            const ListTile(
-              title: Text('Notes'),
             ),
           ],
         ),

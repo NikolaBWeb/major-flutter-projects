@@ -16,7 +16,6 @@ class _AddPatientsState extends ConsumerState<AddPatients> {
     print('Building AddPatients'); // Add this debug print
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {
@@ -24,16 +23,21 @@ class _AddPatientsState extends ConsumerState<AddPatients> {
             },
             icon: const Icon(Icons.arrow_back),
           ),
-          const Spacer(),
+          Icon(
+            Icons.person_add_alt_1,
+            color: Theme.of(context).colorScheme.secondary,
+            size: 25,
+          ),
+          const SizedBox(width: 10),
           const Padding(
             padding: EdgeInsets.only(right: 20),
             child: Text(
-              'Add Patients',
+              'Add Patient',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
+          const Spacer(),
         ],
-        title: const Text('Add Patient'),
       ),
       body: const AddPatientForm(),
     );

@@ -10,8 +10,18 @@ import 'package:neuroblast_dashboard/widgets/button/text_button_hover.dart';
 class MainScreen extends ConsumerWidget {
   const MainScreen({super.key});
 
+  Future<void> _reloadUser() async {
+    try {
+      await FirebaseAuth.instance.currentUser?.reload();
+    } catch (e) {
+      debugPrint('Error reloading user: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    Future.microtask(_reloadUser);
+
     final content = ref.watch(contentProvider).content;
 
     return Scaffold(
@@ -40,34 +50,25 @@ class MainScreen extends ConsumerWidget {
                   ),
                   const Spacer(),
                   TextButton(
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: const BorderSide(color: Colors.black26),
-                        ),
-                      ),
-                    ),
                     onPressed: () {},
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Row(
                         children: [
-                          Text(
-                            (FirebaseAuth.instance.currentUser?.displayName ??
-                                    'User')
-                                .split(' ')
-                                .map(
-                                  (word) => word.isNotEmpty
-                                      ? word[0].toUpperCase()
-                                      : '',
-                                )
-                                .join(),
-                            style: const TextStyle(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                            ),
+                          FutureBuilder(
+                            future: _reloadUser(),
+                            builder: (context, snapshot) {
+                              return Text(
+                                FirebaseAuth
+                                        .instance.currentUser?.displayName ??
+                                    'User',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              );
+                            },
                           ),
                           const SizedBox(width: 10),
                           const Icon(
@@ -77,6 +78,12 @@ class MainScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                    },
+                    icon: const Icon(Icons.logout_rounded),
                   ),
                 ],
               ),

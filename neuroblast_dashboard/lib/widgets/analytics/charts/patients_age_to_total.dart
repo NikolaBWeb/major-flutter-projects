@@ -57,21 +57,33 @@ class _PatientAgeToTotalChartState
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 40,
+                  reservedSize: 30,
                   getTitlesWidget: (value, meta) {
                     final age = data[value.toInt()]['ageGroup']!.toInt();
-                    return Text('$age-${age + 9}');
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        '$age-${age + 9}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    );
                   },
                 ),
               ),
               leftTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
-                  reservedSize: 40,
+                  reservedSize: 35,
                   interval: 1,
                   getTitlesWidget: (value, meta) {
                     if (value == value.roundToDouble()) {
-                      return Text(value.toInt().toString());
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Text(
+                          value.toInt().toString(),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      );
                     }
                     return const Text('');
                   },

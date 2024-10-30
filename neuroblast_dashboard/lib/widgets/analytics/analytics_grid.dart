@@ -44,7 +44,7 @@ class ChartsGrid extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
+            padding: const EdgeInsets.only(left: 20, top: 10, bottom: 40),
             child: Text(
               title,
               style: const TextStyle(

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
-  
 
 class AddPatientForm extends ConsumerStatefulWidget {
   const AddPatientForm({super.key});

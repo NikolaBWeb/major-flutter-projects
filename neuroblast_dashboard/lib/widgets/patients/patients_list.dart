@@ -48,36 +48,62 @@ class _PatientListState extends ConsumerState<PatientList> {
               final clickedPatientId = patients[index].id;
               // Add debug print for each patient
 
-              return ListTile(
-                title: Text('${patient['name']} ${patient['surname']}'),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Gender: ${patient['gender']}'),
-                    Text('Age: ${patient['age']}'),
-                    Text(
-                      'Primary Diagnosis: ${patient['primaryDiagnosis']}',
-                    ), // Changed 'pr' to 'primaryDiagnosis' for clarity
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
                   ],
                 ),
-                trailing: const Icon(
-                  Icons.arrow_forward,
-                ), // Optional: Add an icon for a better UX
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (context) => PatientDetails(
-                        name: patient['name'] as String,
-                        surname: patient['surname'] as String,
-                        age: patient['age'] as String,
-                        gender: patient['gender'] as String,
-                        primaryDiagnosis: patient['primaryDiagnosis'] as String,
-                        patientId: clickedPatientId,
+                child: ListTile(
+                  title: Text('${patient['name']} ${patient['surname']}'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Gender: ${patient['gender']}'),
+                      Text('Age: ${patient['age']}'),
+                      Text(
+                        'Primary Diagnosis: ${patient['primaryDiagnosis']}',
+                      ), // Changed 'pr' to 'primaryDiagnosis' for clarity
+                    ],
+                  ),
+                  trailing: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Patient Details',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  );
-                },
+                      SizedBox(width: 10),
+                      Icon(Icons.arrow_forward),
+                    ],
+                  ), // Changed trailing to a Row
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => PatientDetails(
+                          name: patient['name'] as String,
+                          surname: patient['surname'] as String,
+                          age: patient['age'] as String,
+                          gender: patient['gender'] as String,
+                          primaryDiagnosis:
+                              patient['primaryDiagnosis'] as String,
+                          patientId: clickedPatientId,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               );
             },
           );
