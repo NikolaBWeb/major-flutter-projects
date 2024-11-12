@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:neuroblast_dashboard/providers/content_provider.dart';
+
 import 'package:neuroblast_dashboard/widgets/analytics/analytics_grid.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
