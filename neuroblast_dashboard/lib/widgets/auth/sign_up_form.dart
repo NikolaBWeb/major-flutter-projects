@@ -41,7 +41,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     }
                     return null;
                   },
-                  controller: nameController,
+                  controller: nameController, /*  */
                 ),
                 TextFormField(
                   decoration: const InputDecoration(

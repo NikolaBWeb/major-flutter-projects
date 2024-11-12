@@ -10,6 +10,7 @@ class AnalyticsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Icon(
@@ -18,17 +19,13 @@ class AnalyticsScreen extends ConsumerWidget {
               size: 30,
             ),
             const SizedBox(width: 10),
-            const Text(
-              'Analytics',
-              style: TextStyle(color: Colors.black),
+            Text(
+              'ANALYTICS',
+              style: TextStyle(
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+              ),
             ),
           ],
-        ),
-        leading: IconButton(
-          onPressed: () {
-            ref.read(contentProvider.notifier).updateContent('Patients');
-          },
-          icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: const Center(

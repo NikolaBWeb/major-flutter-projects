@@ -28,9 +28,11 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(width: 10),
-                const Text(
+                Text(
                   'PATIENTS',
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  ),
                 ),
                 const Spacer(),
                 OutlinedButton.icon(
@@ -39,21 +41,21 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
                         .read(contentProvider.notifier)
                         .updateContent('Add Patients');
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.add,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Add Patient',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 16,
+                    ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                    side: BorderSide.none,
                   ),
                 ),
                 const SizedBox(width: 20),

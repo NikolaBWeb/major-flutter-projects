@@ -1,14 +1,23 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
 import 'package:neuroblast_dashboard/screens/analytics/analytics_screen.dart';
 import 'package:neuroblast_dashboard/screens/patients/add_patients.dart';
 import 'package:neuroblast_dashboard/screens/patients/patients.dart';
+import 'package:neuroblast_dashboard/screens/settings/settings.dart';
 import 'package:neuroblast_dashboard/widgets/button/text_button_hover.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class MainScreen extends ConsumerWidget {
+class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
+  bool _isDropdownVisible = false;
+  bool _isDarkMode = false; // Track dark mode state
 
   Future<void> _reloadUser() async {
     try {
@@ -18,133 +27,247 @@ class MainScreen extends ConsumerWidget {
     }
   }
 
+  void _toggleDropdown() {
+    setState(() {
+      _isDropdownVisible = !_isDropdownVisible;
+    });
+  }
+
+  // Toggle dark mode state
+  void _toggleDarkMode(bool value) {
+    setState(() {
+      _isDarkMode = value; // Use the provided value instead of toggling
+    });
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     Future.microtask(_reloadUser);
 
     final content = ref.watch(contentProvider).content;
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(
-          kToolbarHeight + 2, // Increased height to align with the row
-        ),
-        child: Stack(
-          children: [
-            AppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
-                children: [
-                  Image.asset(
-                    'assets/logo/NeuroBLAST - Symbol (Black).png',
-                    height: 25,
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'Dashboard',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                    ),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          FutureBuilder(
-                            future: _reloadUser(),
-                            builder: (context, snapshot) {
-                              return Text(
-                                FirebaseAuth
-                                        .instance.currentUser?.displayName ??
-                                    'User',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(width: 10),
-                          const Icon(
-                            Icons.arrow_drop_down_outlined,
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signOut();
-                    },
-                    icon: const Icon(Icons.logout_rounded),
-                  ),
-                ],
+        preferredSize: const Size.fromHeight(kToolbarHeight + 2),
+        child: AppBar(
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          automaticallyImplyLeading: false,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(
+              color: Colors.grey[300],
+              height: 1,
+            ),
+          ),
+          title: Row(
+            children: [
+              Image.asset(
+                'assets/logo/NeuroBLAST - Symbol (Black).png',
+                height: 25,
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color,
               ),
-              /* actions: [
-                IconButton(
-                  onPressed: () async {
-                    try {
-                      await FirebaseAuth.instance.signOut();
-                      // Remove the manual navigation
-                      // The StreamBuilder in main.dart will handle the navigation
-                    } catch (e) {
-                      print('Error signing out: $e');
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text('Failed to sign out. Please try again.'),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  icon: const Icon(Icons.logout_rounded),
+              const SizedBox(width: 10),
+              Text(
+                'Dashboard',
+                style: TextStyle(
+                  color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
                 ),
-              ], */
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 1,
-                color: Colors.grey[300],
               ),
-            ),
-          ],
+              const Spacer(),
+              TextButton(
+                onPressed: _toggleDropdown,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      FutureBuilder(
+                        future: _reloadUser(),
+                        builder: (context, snapshot) {
+                          return Text(
+                            FirebaseAuth.instance.currentUser?.displayName ??
+                                'User',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .titleTextStyle
+                                  ?.color,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Icon(
+                        Icons.arrow_drop_down_outlined,
+                        color:
+                            Theme.of(context).appBarTheme.titleTextStyle?.color,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      body: Row(
+      body: Stack(
         children: [
-          Container(
-            width: 200,
-            color: Colors.white,
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                _buildNavButton(ref, 'Patients', Icons.people, content),
-                _buildNavButton(ref, 'Analytics', Icons.analytics, content),
-                // Add more navigation items as needed
-              ],
+          Row(
+            children: [
+              Container(
+                width: 200,
+                color: Theme.of(context).colorScheme.surface,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    _buildNavButton(
+                      ref,
+                      'Patients',
+                      Icons.people,
+                      content,
+                    ),
+                    _buildNavButton(
+                      ref,
+                      'Analytics',
+                      Icons.analytics,
+                      content,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 1,
+                color: Colors.grey[200],
+              ),
+              Expanded(
+                child: Center(
+                  child: _buildContent(content),
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: 1,
+              color: Colors.grey[300],
             ),
           ),
-          Container(
-            width: 1,
-            color: Colors.grey[200],
-          ),
-          Expanded(
-            child: Center(
-              child: _buildContent(content),
+          if (_isDropdownVisible)
+            Positioned(
+              top: 0,
+              right: 30,
+              child: Material(
+                elevation: 4,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.white,
+                  ),
+                  width: 150,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextButton(
+                        onPressed: _toggleDropdown,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.person,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            const SizedBox(width: 10),
+                            const Text(
+                              'Profile',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _toggleDropdown,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.settings,
+                              color: Theme.of(context)
+                                  .appBarTheme
+                                  .titleTextStyle
+                                  ?.color,
+                            ),
+                            const SizedBox(width: 10),
+                            TextButton(
+                              onPressed: () {
+                                /* showDialog<dynamic>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SafeArea(
+                                      child: Container(
+                                        padding: EdgeInsets.zero,
+                                        child: Dialog(
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                          ),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(15),
+                                            child: const SizedBox(
+                                              width: 300,
+                                              height: 400,
+                                              child: SettingsScreen(),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ); */
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SettingsScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Settings',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut();
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.logout,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            const SizedBox(width: 10),
+                            const Text(
+                              'Logout',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

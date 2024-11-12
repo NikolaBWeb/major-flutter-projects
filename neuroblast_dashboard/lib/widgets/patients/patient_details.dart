@@ -90,12 +90,12 @@ class _PatientDetailsState extends State<PatientDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           children: [
             Text(
               'Patient Details',
               style: TextStyle(
-                color: Colors.black,
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                 fontWeight: FontWeight.normal,
               ),
             ),
@@ -123,9 +123,9 @@ class _PatientDetailsState extends State<PatientDetails> {
               ),
             ),
             ListTile(
-              onTap: () async { 
+              onTap: () async {
                 await _removePatient();
-                if (mounted) {
+                if (context.mounted) {
                   Navigator.pop(context);
                   Navigator.pop(context);
                 }

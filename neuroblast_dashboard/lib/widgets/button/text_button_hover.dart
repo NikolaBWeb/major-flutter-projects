@@ -28,7 +28,8 @@ class HoverTextButton extends StatelessWidget {
           if (states.contains(WidgetState.hovered)) {
             return Colors.blue;
           }
-          return Colors.black;
+          return Theme.of(context).appBarTheme.titleTextStyle?.color ??
+              Colors.black;
         }),
       ),
       child: Row(

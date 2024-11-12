@@ -48,20 +48,9 @@ class _PatientListState extends ConsumerState<PatientList> {
               final clickedPatientId = patients[index].id;
               // Add debug print for each patient
 
-              return Container(
+              return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 1,
-                      blurRadius: 2,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
+                elevation: 1,
                 child: ListTile(
                   title: Text('${patient['name']} ${patient['surname']}'),
                   subtitle: Column(
