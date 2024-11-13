@@ -149,7 +149,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                   height: 200,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -179,11 +179,14 @@ class _PatientDetailsState extends State<PatientDetails> {
                           RichText(
                             text: TextSpan(
                               children: [
-                                const TextSpan(
+                                TextSpan(
                                   text: 'Patient ID',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                                 TextSpan(
@@ -196,9 +199,12 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 TextSpan(
                                   text: widget.patientId,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                               ],
@@ -208,11 +214,14 @@ class _PatientDetailsState extends State<PatientDetails> {
                           RichText(
                             text: TextSpan(
                               children: [
-                                const TextSpan(
+                                TextSpan(
                                   text: 'Age',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                                 TextSpan(
@@ -225,9 +234,12 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 TextSpan(
                                   text: widget.age,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                               ],
@@ -237,11 +249,14 @@ class _PatientDetailsState extends State<PatientDetails> {
                           RichText(
                             text: TextSpan(
                               children: [
-                                const TextSpan(
+                                TextSpan(
                                   text: 'Gender',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                                 TextSpan(
@@ -254,9 +269,12 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 TextSpan(
                                   text: widget.gender,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                               ],
@@ -266,12 +284,15 @@ class _PatientDetailsState extends State<PatientDetails> {
                           RichText(
                             text: TextSpan(
                               children: [
-                                const TextSpan(
+                                TextSpan(
                                   text: 'Primary Diagnosis',
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                                 TextSpan(
@@ -284,9 +305,12 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 TextSpan(
                                   text: widget.primaryDiagnosis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 20,
-                                    color: Colors.black,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.color,
                                   ),
                                 ),
                               ],
@@ -302,7 +326,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                 height: 200,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(3),
                 ),
                 child: Column(
@@ -330,14 +354,18 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 Icons.note_add,
                                 color: activeTab == 'notes'
                                     ? Colors.white
-                                    : Colors.black,
+                                    : Theme.of(context).colorScheme.secondary,
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 'Notes',
                                 style: activeTab == 'notes'
                                     ? const TextStyle(color: Colors.white)
-                                    : null,
+                                    : TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
                               ),
                             ],
                           ),
@@ -363,14 +391,18 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 Icons.task_alt,
                                 color: activeTab == 'tasks'
                                     ? Colors.white
-                                    : Colors.black,
+                                    : Theme.of(context).colorScheme.secondary,
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 'Tasks',
                                 style: activeTab == 'tasks'
                                     ? const TextStyle(color: Colors.white)
-                                    : null,
+                                    : TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
                               ),
                             ],
                           ),
@@ -396,14 +428,18 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 Icons.bar_chart,
                                 color: activeTab == 'neuroblast'
                                     ? Colors.white
-                                    : Colors.black,
+                                    : Theme.of(context).colorScheme.secondary,
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 'Neuroblast',
                                 style: activeTab == 'neuroblast'
                                     ? const TextStyle(color: Colors.white)
-                                    : null,
+                                    : TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
                               ),
                             ],
                           ),
