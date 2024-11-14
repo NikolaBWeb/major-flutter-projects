@@ -120,7 +120,7 @@ class _PatientNotesState extends State<PatientNotes> {
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
@@ -128,21 +128,21 @@ class _PatientNotesState extends State<PatientNotes> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+              Row(
                 children: [
-                  Text(
+                  const Text(
                     'Patient Notes',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   RotatedBox(
                     quarterTurns: 3,
                     child: Icon(
                       Icons.note,
-                      color: Colors.black,
+                      color: Theme.of(context).colorScheme.secondary,
                       size: 30,
                     ),
                   ),
@@ -152,7 +152,11 @@ class _PatientNotesState extends State<PatientNotes> {
 
               // While adding a note, show loading indicator instead of old list
               if (isNoteAdding)
-                const Center(child: CircularProgressIndicator())
+                const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                  ),
+                )
               else
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -165,7 +169,9 @@ class _PatientNotesState extends State<PatientNotes> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
                         );
                       }
 

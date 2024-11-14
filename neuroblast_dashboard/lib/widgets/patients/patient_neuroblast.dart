@@ -20,24 +20,25 @@ class PatientNeuroblast extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Text(
+                    const Text(
                       'Neuroblast Telemetry',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Icon(
                       Icons.bar_chart_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
                       size: 30,
                     ),
                   ],
@@ -48,6 +49,7 @@ class PatientNeuroblast extends StatelessWidget {
                   const MovementAngleChart(),
                   300,
                   true,
+                  Theme.of(context).colorScheme.surface,
                 ),
                 const SizedBox(height: 20),
                 _buildChartSection(
@@ -55,6 +57,7 @@ class PatientNeuroblast extends StatelessWidget {
                   const TimeUsedChart(),
                   400,
                   true,
+                  Theme.of(context).colorScheme.surface,
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -65,6 +68,7 @@ class PatientNeuroblast extends StatelessWidget {
                         const AccelerationChart(),
                         400,
                         false,
+                        Theme.of(context).colorScheme.surface,
                       ),
                     ),
                     const SizedBox(width: 20),
@@ -74,6 +78,7 @@ class PatientNeuroblast extends StatelessWidget {
                         const PressureChart(),
                         400,
                         false,
+                        Theme.of(context).colorScheme.surface,
                       ),
                     ),
                   ],
@@ -83,6 +88,7 @@ class PatientNeuroblast extends StatelessWidget {
                   const PatientCalendar(),
                   400,
                   false,
+                  Theme.of(context).colorScheme.surface,
                 ),
               ],
             ),
@@ -97,12 +103,13 @@ class PatientNeuroblast extends StatelessWidget {
     Widget chart,
     double height,
     bool legend,
+    Color color,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: color,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(

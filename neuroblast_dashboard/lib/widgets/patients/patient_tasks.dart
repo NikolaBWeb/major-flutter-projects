@@ -13,30 +13,30 @@ class PatientTasks extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
         children: [
-          const Column(
+          Column(
             children: [
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Tasks',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Icon(
                     Icons.task_alt_rounded,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ],
               ),
-              Expanded(
+              const Expanded(
                 child: Center(
                   child: Text('No tasks available.'),
                 ),
