@@ -7,6 +7,7 @@ import 'package:neuroblast_dashboard/screens/patients/patients.dart';
 import 'package:neuroblast_dashboard/screens/settings/settings.dart';
 import 'package:neuroblast_dashboard/widgets/button/text_button_hover.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patient_search_bar.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -168,7 +169,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                   width: 150,
                   child: Column(
@@ -183,9 +184,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                             const SizedBox(width: 10),
-                            const Text(
+                            Text(
                               'Profile',
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .titleTextStyle
+                                    ?.color,
+                              ),
                             ),
                           ],
                         ),
@@ -196,12 +202,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                           children: [
                             Icon(
                               Icons.settings,
-                              color: Theme.of(context)
-                                  .appBarTheme
-                                  .titleTextStyle
-                                  ?.color,
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
-                            const SizedBox(width: 10),
                             TextButton(
                               onPressed: () {
                                 /* showDialog<dynamic>(
@@ -237,9 +239,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                   ),
                                 );
                               },
-                              child: const Text(
+                              child: Text(
                                 'Settings',
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(
+                                  color: Theme.of(context)
+                                      .appBarTheme
+                                      .titleTextStyle
+                                      ?.color,
+                                ),
                               ),
                             ),
                           ],
@@ -256,9 +263,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               color: Theme.of(context).colorScheme.secondary,
                             ),
                             const SizedBox(width: 10),
-                            const Text(
+                            Text(
                               'Logout',
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .appBarTheme
+                                    .titleTextStyle
+                                    ?.color,
+                              ),
                             ),
                           ],
                         ),

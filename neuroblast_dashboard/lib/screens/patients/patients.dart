@@ -34,6 +34,10 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
                     color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                   ),
                 ),
+                const SizedBox(
+                  width: 10,
+                ),
+                const PatientSearchBar(),
                 const Spacer(),
                 OutlinedButton.icon(
                   onPressed: () {
@@ -67,7 +71,6 @@ class _PatientsScreenState extends ConsumerState<PatientsScreen> {
       body: const Column(
         // Change from Column to ListView
         children: [
-          PatientInfoRow(),
           Expanded(child: PatientList()),
         ],
       ),
