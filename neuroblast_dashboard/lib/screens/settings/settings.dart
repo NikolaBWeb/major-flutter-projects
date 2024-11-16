@@ -1,5 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {

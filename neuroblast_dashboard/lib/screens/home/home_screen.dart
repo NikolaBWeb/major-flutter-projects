@@ -14,16 +14,19 @@ class HomeScreen extends StatelessWidget {
             AppBar(
               automaticallyImplyLeading: false,
               title: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
                       text: 'Neuro',
                       style: TextStyle(
-                        color: Colors.black, // Color for "Neuro"
+                        color: Theme.of(context)
+                            .appBarTheme
+                            .titleTextStyle
+                            ?.color, // Color for "Neuro"
                         fontSize: 17,
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: 'BLAST ',
                       style: TextStyle(
                         color: Color(0xFFA2D06B), // Accent color for "BLAST"
@@ -33,7 +36,8 @@ class HomeScreen extends StatelessWidget {
                     TextSpan(
                       text: 'Dashboard',
                       style: TextStyle(
-                        color: Colors.black,
+                        color:
+                            Theme.of(context).appBarTheme.titleTextStyle?.color,
                         fontSize: 17,
                         fontWeight: FontWeight.w500,
                       ),

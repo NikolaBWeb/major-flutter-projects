@@ -265,6 +265,9 @@ class _AuthFormState extends State<AuthForm> {
                   _isLogin
                       ? "Don't have an account? Sign Up"
                       : 'Already have an account? Login',
+                  style: TextStyle(
+                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  ),
                 ),
               ),
             ],

@@ -12,6 +12,7 @@ class PatientSearchBar extends ConsumerStatefulWidget {
 
 class _PatientSearchBarState extends ConsumerState<PatientSearchBar> {
   String query = '';
+  bool isEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +36,24 @@ class _PatientSearchBarState extends ConsumerState<PatientSearchBar> {
               backgroundColor: WidgetStatePropertyAll(
                 Theme.of(context).appBarTheme.backgroundColor,
               ),
-              side: WidgetStatePropertyAll(
-                BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+              side: WidgetStateProperty.resolveWith<BorderSide>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.focused)) {
+                    return BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2,
+                    );
+                  }
+                  return BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                  );
+                },
               ),
+              enabled: isEnabled,
               onTap: () {
+                setState(() {
+                  isEnabled = true;
+                });
                 controller.openView();
               },
               onChanged: (String searchQuery) {
@@ -49,6 +62,21 @@ class _PatientSearchBarState extends ConsumerState<PatientSearchBar> {
                 });
                 controller.openView();
               },
+              trailing: isEnabled
+                  ? [
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          setState(() {
+                            isEnabled = false;
+                            query = '';
+                          });
+                          controller.clear();
+                          controller.closeView(query);
+                        },
+                      ),
+                    ]
+                  : null,
               leading: const Icon(Icons.search),
               hintText: 'Search patients...',
               shape: WidgetStatePropertyAll<OutlinedBorder>(
@@ -114,36 +142,6 @@ class _PatientSearchBarState extends ConsumerState<PatientSearchBar> {
             });
           },
         ),
-      ),
-    );
-  }
-}
-
-class PatientInfoRow extends ConsumerStatefulWidget {
-  const PatientInfoRow({super.key});
-
-  @override
-  ConsumerState<PatientInfoRow> createState() => _PatientInfoRowState();
-}
-
-class _PatientInfoRowState extends ConsumerState<PatientInfoRow> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(4),
-            child: PatientSearchBar(),
-          ),
-          Spacer(),
-        ],
       ),
     );
   }

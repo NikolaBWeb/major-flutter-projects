@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:neuroblast_dashboard/firebase_options.dart';
+import 'package:neuroblast_dashboard/providers/theme_provider.dart';
 import 'package:neuroblast_dashboard/screens/home/home_screen.dart';
 import 'package:neuroblast_dashboard/screens/main/main_screen.dart';
 import 'package:neuroblast_dashboard/screens/main/splash.dart';
-import 'package:neuroblast_dashboard/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +25,7 @@ class MyApp extends ConsumerWidget {
     final isDarkMode = ref.watch(themeProvider).isDarkMode;
 
     return MaterialApp(
+      builder: (context, child) => SafeArea(child: child!),
       debugShowCheckedModeBanner: false,
       title: 'NeuroBlast Dashboard',
       theme: isDarkMode ? darkAppTheme : appTheme,

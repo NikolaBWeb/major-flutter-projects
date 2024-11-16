@@ -72,11 +72,15 @@ class TimeUsedChart extends StatelessWidget {
               verticalInterval: 1, // Match interval with days
             ),
             borderData: FlBorderData(
-              border: const Border(
-                bottom: BorderSide(),
-                left: BorderSide(),
-                right: BorderSide(color: Colors.transparent),
-                top: BorderSide(color: Colors.transparent),
+              border: Border(
+                bottom: BorderSide(
+                  color: Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                      Colors.black,
+                ),
+                left: BorderSide(
+                  color: Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                      Colors.black,
+                ),
               ),
             ),
             barGroups: _buildBarData(),

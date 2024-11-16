@@ -118,9 +118,15 @@ class MovementAngleChart extends StatelessWidget {
           ),
           borderData: FlBorderData(
             show: true,
-            border: const Border(
-              bottom: BorderSide(),
-              left: BorderSide(),
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                    Colors.black,
+              ),
+              left: BorderSide(
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color ??
+                    Colors.black,
+              ),
             ),
           ),
           minX: 0,

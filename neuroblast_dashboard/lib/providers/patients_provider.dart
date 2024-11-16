@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/models/patient/patient.dart';
 
+enum PatientViewType { list, grid }
+
 final patientsProvider = ChangeNotifierProvider<PatientsProvider>((ref) {
   return PatientsProvider();
 });
 
 class PatientsProvider extends ChangeNotifier {
-  // Holds any error message
-
   PatientsProvider() {
     _listenToPatients();
     // Start listening to patients when the provider is initialized
   }
+  // Holds any error message
+
+  PatientViewType _viewType = PatientViewType.list;
   List<Patient>? _patients; // Holds the list of patients
   bool _isLoading = true; // Indicates if data is being loaded
   String? _error;
@@ -21,6 +24,13 @@ class PatientsProvider extends ChangeNotifier {
   List<Patient>? get patients => _patients;
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  PatientViewType get viewType => _viewType;
+
+  void setViewType(PatientViewType newViewType) {
+    _viewType = newViewType;
+    notifyListeners();
+  }
 
   void _listenToPatients() {
     FirebaseFirestore.instance.collection('patients').snapshots().listen(

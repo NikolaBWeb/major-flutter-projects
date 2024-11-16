@@ -281,7 +281,15 @@ class _PatientNotesState extends State<PatientNotes> {
                               const SizedBox(height: 5),
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('Close'),
+                                child: Text(
+                                  'Close',
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .appBarTheme
+                                        .titleTextStyle
+                                        ?.color,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
