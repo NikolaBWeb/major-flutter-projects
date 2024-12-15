@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:neuroblast_dashboard/models/patient/patient.dart';
 import 'package:neuroblast_dashboard/widgets/patients/hoverable_list_tile.dart';
 
 class PatientNotes extends StatefulWidget {
@@ -19,11 +18,12 @@ class _PatientNotesState extends State<PatientNotes> {
   final TextEditingController _noteController = TextEditingController();
   bool _isAddingNote = false;
   bool isSending = false;
+  bool isNoteAdding =
+      false; // This will control when to display the updated list
 
   Future<void> addPatientNote() async {
     final noteText = _noteController.text.trim();
     if (noteText.isEmpty) {
-      // Show message if note is empty
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a note before adding')),
       );
@@ -32,39 +32,52 @@ class _PatientNotesState extends State<PatientNotes> {
 
     setState(() {
       _isAddingNote = true;
+      isNoteAdding = true; // Prevent old notes from displaying
       isSending = true;
     });
 
     try {
-      // Add the note to the "notes" subcollection within the "patients" collection
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Adding note...')),
+      );
       await FirebaseFirestore.instance
           .collection('patients')
           .doc(widget.patientId)
-          .collection('notes') // Subcollection for notes
+          .collection('notes')
           .add({
         'note': noteText,
         'createdAt': Timestamp.now(),
       });
 
       if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Note added successfully')),
+          SnackBar(
+            content: const Text(
+              'Note added successfully',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+          ),
         );
       }
 
-      // Clear the text field
-      _noteController.clear();
+      _noteController.clear(); // Clear the text field
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add note: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add note: $e')),
+        );
+      }
     } finally {
       setState(() {
         _isAddingNote = false;
         isSending = false;
+        isNoteAdding = false; // Re-enable the display of the updated list
       });
-
-      Navigator.pop(context); // Close the modal bottom sheet
+      if (mounted) {
+        Navigator.pop(context); // Close the modal
+      }
     }
   }
 
@@ -81,11 +94,20 @@ class _PatientNotesState extends State<PatientNotes> {
     setState(() {
       isSending = false;
     });
+    if (mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Note deleted successfully'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
-    _noteController.dispose(); // Clean up controller when widget is disposed
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -127,42 +149,51 @@ class _PatientNotesState extends State<PatientNotes> {
                 ],
               ),
               const SizedBox(height: 10),
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('patients')
-                      .doc(widget.patientId)
-                      .collection('notes')
-                      .orderBy('createdAt', descending: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
 
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(child: Text('No notes available.'));
-                    }
-
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        final noteDoc = snapshot.data!.docs[index];
-                        final note = noteDoc['note'] as String;
-                        final createdAt = noteDoc['createdAt'] as Timestamp;
-
-                        return HoverableListTile(
-                          note: note,
-                          createdAt: createdAt,
-                          onDelete: () {
-                            deletePatientNote(noteDoc.id); // Delete the note
-                          },
+              // While adding a note, show loading indicator instead of old list
+              if (isNoteAdding)
+                const Center(child: CircularProgressIndicator())
+              else
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('patients')
+                        .doc(widget.patientId)
+                        .collection('notes')
+                        .orderBy('createdAt', descending: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
-                      },
-                    );
-                  },
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(
+                          child: Text('No notes available.'),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final noteDoc = snapshot.data!.docs[index];
+                          final note = noteDoc['note'] as String;
+                          final createdAt = noteDoc['createdAt'] as Timestamp;
+
+                          return HoverableListTile(
+                            note: note,
+                            createdAt: createdAt,
+                            onDelete: () {
+                              deletePatientNote(noteDoc.id);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
             ],
           ),
           Positioned(
@@ -197,19 +228,12 @@ class _PatientNotesState extends State<PatientNotes> {
                               ),
                               const SizedBox(height: 15),
                               ElevatedButton(
-                                // This button is used to add a new patient note
-                                // It is disabled when a note is currently
-                                // being sent
                                 onPressed: isSending
                                     ? null
                                     : () {
-                                        // Set the sending state to true when
-                                        //the button is pressed
                                         setModalState(() {
                                           isSending = true;
                                         });
-                                        // Call the addPatientNote function and
-                                        //update the state when it's done
                                         addPatientNote().then((_) {
                                           setModalState(() {
                                             isSending = false;

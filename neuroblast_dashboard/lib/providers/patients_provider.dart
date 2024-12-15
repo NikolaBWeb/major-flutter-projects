@@ -11,7 +11,8 @@ class PatientsProvider extends ChangeNotifier {
   // Holds any error message
 
   PatientsProvider() {
-    _listenToPatients(); // Start listening to patients when the provider is initialized
+    _listenToPatients();
+    // Start listening to patients when the provider is initialized
   }
   List<Patient>? _patients; // Holds the list of patients
   bool _isLoading = true; // Indicates if data is being loaded

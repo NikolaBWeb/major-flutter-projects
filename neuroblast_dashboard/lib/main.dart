@@ -8,6 +8,7 @@ import 'package:neuroblast_dashboard/screens/home/home_screen.dart';
 import 'package:neuroblast_dashboard/screens/main/main_screen.dart';
 import 'package:neuroblast_dashboard/screens/main/splash.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

@@ -1,18 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:neuroblast_dashboard/providers/content_provider.dart';
+
 import 'package:neuroblast_dashboard/widgets/patients/patient_details.dart';
 
-/// A widget that displays a list of patients.
-///
-/// This widget uses [ConsumerStatefulWidget] to enable state management
-/// with Riverpod. It fetches patient data from Firestore and displays
-/// it in a scrollable list.
-///
-/// The list updates in real-time as changes occur in the Firestore database.
 class PatientList extends ConsumerStatefulWidget {
-  // ignore: public_member_api_docs
   const PatientList({super.key});
 
   @override

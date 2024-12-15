@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
-import 'package:neuroblast_dashboard/providers/patients_provider.dart';
 
 class AddPatientForm extends ConsumerStatefulWidget {
   const AddPatientForm({super.key});
@@ -63,7 +62,6 @@ class _AddPatientFormState extends ConsumerState<AddPatientForm> {
         primaryDiagnosis: _selectedDiagnosis!,
         age: _ageController.text,
       );
-      
 
       // Reset sending state
       setState(() {

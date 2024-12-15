@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuroblast_dashboard/providers/content_provider.dart';
 import 'package:neuroblast_dashboard/providers/patients_provider.dart';
-import 'package:neuroblast_dashboard/widgets/patients/patient_info_row.dart';
+import 'package:neuroblast_dashboard/widgets/patients/patient_search_bar.dart';
 import 'package:neuroblast_dashboard/widgets/patients/patients_list.dart';
 
 class PatientsScreen extends ConsumerStatefulWidget {
